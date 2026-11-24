@@ -18,7 +18,7 @@ jobs:
       - name: Build and verify allowlisted preview package
         shell: powershell
         run: |
-          $version='0.1.0-alpha.2'
+          $version='0.1.0-alpha.3'
           if ($env:GITHUB_REF_TYPE -eq 'tag') { $version=$env:GITHUB_REF_NAME.TrimStart('v') }
           .\Build-Public.ps1 -Version $version -OutputRoot "$env:RUNNER_TEMP\launcher-release"
       - uses: actions/upload-artifact@v4

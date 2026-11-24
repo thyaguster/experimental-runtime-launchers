@@ -1,7 +1,12 @@
 param([Parameter(Mandatory=$true)][string]$Stage,[Parameter(Mandatory=$true)][string]$TemporaryRoot)
 $ErrorActionPreference='Stop'
 function Invoke-LauncherCheck([string]$Executable,[string[]]$Arguments) {
-    $child=Start-Process -FilePath $Executable -ArgumentList $Arguments -WindowStyle Hidden -PassThru
+    $savedRoot=$env:DOTNET_ROOT; $savedX64=$env:DOTNET_ROOT_X64; $savedLookup=$env:DOTNET_MULTILEVEL_LOOKUP
+    try {
+        $env:DOTNET_ROOT=Join-Path $TemporaryRoot 'no-installed-dotnet'
+        $env:DOTNET_ROOT_X64=$env:DOTNET_ROOT; $env:DOTNET_MULTILEVEL_LOOKUP='0'
+        $child=Start-Process -FilePath $Executable -ArgumentList $Arguments -WindowStyle Hidden -PassThru
+    } finally { $env:DOTNET_ROOT=$savedRoot; $env:DOTNET_ROOT_X64=$savedX64; $env:DOTNET_MULTILEVEL_LOOKUP=$savedLookup }
     if (-not $child.WaitForExit(30000)) {
         Stop-Process -Id $child.Id -ErrorAction SilentlyContinue
         throw "Launcher check timed out: $($Arguments -join ' ')"
@@ -25,6 +30,8 @@ foreach ($name in @('VIctory','XCL','Leonida','Xbox2Windows')) {
     try { & (Join-Path $apps 'tools\Initialize-Project.ps1') -ProjectRoot $project -DataRoot $data } catch { $refused=$true }
     if (-not $refused) { throw 'Setup unexpectedly overwrote an existing project.' }
     $exe=Join-Path $project "LauncherApp\$name Launcher.exe"
+    $runtime=Get-Content -LiteralPath (Join-Path $project "LauncherApp\$name Launcher.runtimeconfig.json") -Raw | ConvertFrom-Json
+    if ($runtime.runtimeOptions.framework -or $runtime.runtimeOptions.frameworks -or -not $runtime.runtimeOptions.includedFrameworks) { throw 'Release launcher still requires an installed .NET runtime.' }
     $code=Invoke-LauncherCheck $exe @('--self-test')
     if ($code -ne 0) { Get-Content -LiteralPath (Join-Path $data 'launcher-data\self-test.txt'); throw "$name launcher self-test failed." }
     if ($name -eq 'Leonida') {
@@ -34,7 +41,7 @@ foreach ($name in @('VIctory','XCL','Leonida','Xbox2Windows')) {
     $preview=Join-Path $fixture "$name-first-run.png"
     $code=Invoke-LauncherCheck $exe @('--preview-first-run',$preview)
     if ($code -ne 0 -or -not (Test-Path -LiteralPath $preview)) { throw 'First-run dialog render failed.' }
-    $results+="$name : isolated setup, no personal defaults, overwrite refusal, launcher smoke: PASS"
+    $results+="$name : self-contained launch with invalid global runtime paths, isolated setup, overwrite refusal, launcher smoke: PASS"
 }
 # Malicious additions to an allowlist must be rejected, even if someone has a
 # private source checkout in the same working directory.

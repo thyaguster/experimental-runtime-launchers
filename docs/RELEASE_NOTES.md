@@ -1,4 +1,4 @@
-# v0.1.0-alpha.2 — experimental preview
+# v0.1.0-alpha.3 — self-contained experimental preview
 
 Portable Windows x64 launcher interfaces for VIctory, XCL, the specified Leonida fork, and Xbox2Windows research tools.
 
@@ -9,7 +9,7 @@ Portable Windows x64 launcher interfaces for VIctory, XCL, the specified Leonida
 - Offline Xbox2Windows reports and source-built GPU checks.
 - Allowlisted release packaging and SHA-256 checksum.
 
-**Requires the .NET 10 Windows Desktop Runtime (x64).** Upstream builds require additional developer tools and may use significant disk space and time. Download origins are documented in `docs/DOWNLOADS.md`.
+**Extract the ZIP and double-click the appropriate `Launch-*.cmd`. No .NET installation or terminal commands are needed to open the launchers.** Keep the extracted folders together. This release includes local .NET 10 Windows Desktop runtimes. Upstream engine builds still require developer tools and may use significant disk space and time; clone/build/update actions are available through the UI. Download origins are documented in `docs/DOWNLOADS.md`.
 
 Experimental purposes only. No game files, extracted shaders, upstream engine binaries or compiler installations are included. This release does not promise game startup or gameplay. The launcher is unofficial; each upstream project is independently maintained and licensed.
 

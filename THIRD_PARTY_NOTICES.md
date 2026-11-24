@@ -11,6 +11,6 @@ The integrations invoke independently developed upstream programs as separate pr
 
 Preserve their license and third-party files in downloaded checkouts. Engine/tool bundles generated locally include files required by the adapters; redistributing those bundles is outside this launcher release process and requires reviewing their licenses separately.
 
-Microsoft .NET apphost components are built by the .NET SDK. .NET is distributed under its own licenses and notices: https://github.com/dotnet/runtime/blob/main/LICENSE.TXT and https://github.com/dotnet/runtime/blob/main/THIRD-PARTY-NOTICES.TXT. The Windows Desktop runtime is a separate prerequisite, not bundled here.
+The self-contained Windows launchers include Microsoft .NET and Windows Desktop runtime components distributed by the .NET SDK. Their licenses and notices are bundled under `runtime-notices` in each launcher folder. Source and notices: https://github.com/dotnet/runtime and https://github.com/dotnet/windowsdesktop. No system-wide .NET runtime installation is required.
 
 Other optional downloads include Rust, LLVM, SPIR-V Tools, micromamba, SDL3 and Vulkan headers. Their licenses remain applicable. The dependency managers and upstream source trees retain their notices. See `docs/DOWNLOADS.md` for origins.

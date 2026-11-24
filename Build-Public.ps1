@@ -1,6 +1,6 @@
-param([string]$OutputRoot=(Join-Path $PSScriptRoot 'artifacts'),[string]$Version='0.1.0-alpha.2',[string]$Dotnet='dotnet')
+param([string]$OutputRoot=(Join-Path $PSScriptRoot 'artifacts'),[string]$Version='0.1.0-alpha.3',[string]$Dotnet='dotnet')
 $ErrorActionPreference='Stop'
-if ($Version -notmatch '^\d+\.\d+\.\d+-(alpha|beta|rc)\.\d+$') { throw 'Use an experimental prerelease version such as 0.1.0-alpha.2.' }
+if ($Version -notmatch '^\d+\.\d+\.\d+-(alpha|beta|rc)\.\d+$') { throw 'Use an experimental prerelease version such as 0.1.0-alpha.3.' }
 $root=$PSScriptRoot
 $files=@(& (Join-Path $root 'tools\Validate-Manifest.ps1') -Root $root)
 foreach ($file in $files | Where-Object { $_ -like '*.ps1' }) {
@@ -22,14 +22,37 @@ foreach ($relative in $files) {
 foreach ($name in @('VIctory','XCL','Leonida','Xbox2Windows')) {
     $project=Get-ChildItem -LiteralPath (Join-Path $root "$name\Launcher") -Filter '*.csproj' | Select-Object -First 1 -ExpandProperty FullName
     $publish=Join-Path $OutputRoot ('publish-'+$name+'-'+[guid]::NewGuid().ToString('N'))
-    & $Dotnet publish $project -c Release -r win-x64 --self-contained false -p:Version=$Version -p:DebugType=None -o $publish
+    & $Dotnet publish $project -c Release -r win-x64 --self-contained true -p:Version=$Version -p:DebugType=None -o $publish
     if ($LASTEXITCODE -ne 0) { throw "$name launcher build failed." }
     $destination=Join-Path $stage "$name\LauncherApp"
     New-Item -ItemType Directory -Path $destination -Force | Out-Null
     foreach ($suffix in @('.exe','.dll','.deps.json','.runtimeconfig.json')) {
         $file="$name Launcher$suffix"
         if (-not (Test-Path -LiteralPath (Join-Path $publish $file))) { throw "Expected launcher artifact missing: $file" }
-        Copy-Item -LiteralPath (Join-Path $publish $file) -Destination $destination
+    }
+    # Copy only this fresh SDK publish output, including its local .NET runtime.
+    # Game engines, caches and upstream checkouts never enter the publish folder.
+    foreach ($item in Get-ChildItem -LiteralPath $publish -Force) {
+        if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Unexpected link in launcher publish output.' }
+        Copy-Item -LiteralPath $item.FullName -Destination $destination -Recurse
+    }
+    foreach ($runtimeFile in @('hostfxr.dll','hostpolicy.dll','coreclr.dll','System.Private.CoreLib.dll','System.Windows.Forms.dll')) {
+        if (-not (Test-Path -LiteralPath (Join-Path $destination $runtimeFile) -PathType Leaf)) { throw "Self-contained runtime file missing: $runtimeFile" }
+    }
+    $packageRoot=$env:NUGET_PACKAGES
+    if (-not $packageRoot) {
+        $packageRoot=((& $Dotnet nuget locals global-packages --list) -replace '^global-packages:\s*','').Trim()
+        if ($LASTEXITCODE -ne 0) { throw 'Cannot locate runtime package license files.' }
+    }
+    $runtimeConfig=Get-Content -LiteralPath (Join-Path $destination "$name Launcher.runtimeconfig.json") -Raw | ConvertFrom-Json
+    foreach ($framework in $runtimeConfig.runtimeOptions.includedFrameworks) {
+        $package=($framework.name+'.Runtime.win-x64').ToLowerInvariant()
+        $packageFolder=Join-Path (Join-Path $packageRoot $package) $framework.version
+        $noticeFolder=Join-Path $destination "runtime-notices\$($framework.name)"
+        New-Item -ItemType Directory -Path $noticeFolder -Force | Out-Null
+        $notices=@(Get-ChildItem -LiteralPath $packageFolder -File | Where-Object { $_.Name -match '(?i)license|third.party.notices' })
+        if (-not ($notices | Where-Object Name -match '(?i)license')) { throw "Missing runtime license for $($framework.name)." }
+        foreach ($notice in $notices) { Copy-Item -LiteralPath $notice.FullName -Destination $noticeFolder }
     }
 }
 & (Join-Path $root 'tests\Test-Package.ps1') -Stage $stage -TemporaryRoot $OutputRoot

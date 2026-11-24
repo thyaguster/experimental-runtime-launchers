@@ -19,8 +19,8 @@ Upstream projects change independently. Read their current documentation before 
 
 ## First use
 
-1. Install the [.NET 10 Windows Desktop Runtime, x64](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). The small portable ZIP is framework-dependent.
-2. Extract the whole release ZIP into a writable folder. Keep its `tools` folder and project subfolders together.
+1. Download the **win-x64 ZIP** from Releases. The launchers include their own .NET runtime; no .NET installation or terminal commands are needed to open them.
+2. Extract the whole release ZIP into a writable folder on a drive with space. Keep its `tools` folder and project subfolders together; do not run inside the ZIP or move an EXE out of its `LauncherApp` folder.
 3. Open the appropriate `Launch-*.cmd`. First-time setup asks for an optional game EXE and a **new, empty data folder** on a drive with enough space. No personal drive paths are preconfigured.
 4. Select **Clone upstream**, then **Prerequisites**. Install the missing tools from the official links shown, reopen the launcher, and build the selected engine/tool suite.
 5. Leonida defaults to **Integrated VIctory / native D3D12**, built from this fork's `runtimes/victory` source with diagnostics and the Series S profile. Build the engine, then try Launch; shaders compile during use into `launcher-data/integrated-victory/cache`. WARP and the Series S menu presentation workaround are optional diagnostic controls. Build/update/rollback act on the selected backend. For **Native gta6rt / Vulkan**, install shader tools and **Generate shaders first** before Launch. Xbox2Windows offers research checks rather than game execution.
