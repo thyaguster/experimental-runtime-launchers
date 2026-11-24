@@ -1,5 +1,23 @@
 # Experimental Runtime Launchers
 
+## Install on Windows x64
+
+**[Download the launcher ZIP (about 191 MB)](https://github.com/thyaguster/experimental-runtime-launchers/releases/download/v0.1.0-alpha.3/experimental-runtime-launchers-0.1.0-alpha.3-win-x64.zip)** · **[Open the release page](https://github.com/thyaguster/experimental-runtime-launchers/releases/tag/v0.1.0-alpha.3)** · [All releases](https://github.com/thyaguster/experimental-runtime-launchers/releases)
+
+1. Download the **launcher ZIP** using the link above. Do not choose GitHub's **Source code** ZIP. Expand **Assets** on the release page if the downloads are collapsed.
+2. Right-click the downloaded ZIP and choose **Extract All**. Extract it to a writable folder on a drive with enough free space. Keep all extracted folders together.
+3. Open the extracted folder and double-click **`Launch-Leonida.cmd`**, **`Launch-VIctory.cmd`**, **`Launch-XCL.cmd`** or **`Launch-Xbox2Windows.cmd`**. No terminal commands or .NET installation are needed to open a launcher.
+4. In first-time setup, select your game EXE if available and choose a **new, empty project data folder** for that project's source, builds and caches. You can put it on another drive. Use a different data folder for each project.
+5. Click **Prerequisites**. If tools are missing, install them using the official links shown, then close and reopen the launcher. Engine builds need developer tools even though the launcher itself is ready to run.
+6. Click **Clone upstream**, then **Build engine** (or **Build tools** for Xbox2Windows). Wait for the task to finish successfully. These buttons download source and build it locally.
+7. For Leonida, leave **Integrated VIctory / native D3D12** selected and click **Launch integrated VIctory** after building. For standalone VIctory or XCL, use **Launch**. Xbox2Windows currently provides research reports and GPU checks rather than a game-launch button.
+
+**Leonida's older Native gta6rt / Vulkan option:** install its shader tools and click **Generate shaders first** before launching. Integrated VIctory compiles shaders during use and does not need that separate Vulkan preparation step.
+
+This is an **experimental pre-release**, not a game download or a promise of successful game startup. No game files or upstream engine binaries are included. While this repository is private, you must sign in to a GitHub account with repository access to see or download the release.
+
+---
+
 **Experimental Windows launchers and build managers for independent compatibility and recompilation research projects.**
 
 This repository provides setup, build, update, shader-preparation and diagnostic interfaces. It downloads the selected project's source from the upstream GitHub repository and builds supported components on the user's PC. Build dependencies may also come from official vendor endpoints, PyPI, Rust distribution servers and conda-forge.
@@ -22,7 +40,7 @@ Upstream projects change independently. Read their current documentation before 
 1. Download the **win-x64 ZIP** from Releases. The launchers include their own .NET runtime; no .NET installation or terminal commands are needed to open them.
 2. Extract the whole release ZIP into a writable folder on a drive with space. Keep its `tools` folder and project subfolders together; do not run inside the ZIP or move an EXE out of its `LauncherApp` folder.
 3. Open the appropriate `Launch-*.cmd`. First-time setup asks for an optional game EXE and a **new, empty data folder** on a drive with enough space. No personal drive paths are preconfigured.
-4. Select **Clone upstream**, then **Prerequisites**. Install the missing tools from the official links shown, reopen the launcher, and build the selected engine/tool suite.
+4. Select **Prerequisites** first. Install the missing tools from the official links shown and reopen the launcher. Then select **Clone upstream** and build the selected engine/tool suite.
 5. Leonida defaults to **Integrated VIctory / native D3D12**, built from this fork's `runtimes/victory` source with diagnostics and the Series S profile. Build the engine, then try Launch; shaders compile during use into `launcher-data/integrated-victory/cache`. WARP and the Series S menu presentation workaround are optional diagnostic controls. Build/update/rollback act on the selected backend. For **Native gta6rt / Vulkan**, install shader tools and **Generate shaders first** before Launch. Xbox2Windows offers research checks rather than game execution.
 
 Required native build tools include Git for Windows, Python 3.12+, Visual Studio C++ Build Tools with Windows SDK 10.0.26100+, and, depending on the adapter, Rust/rustup or CMake/Ninja. Prerequisite checks do not silently install system-wide software. Explicit build/setup actions can download dependencies and execute build scripts.
