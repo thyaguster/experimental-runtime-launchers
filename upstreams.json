@@ -1,0 +1,34 @@
+[
+  {
+    "name": "VIctory",
+    "repository": "https://github.com/Marvisak/VIctory.git",
+    "branch": "main",
+    "testedCommit": "d2a4bae1f49533ef5cb512fd1b1ba1513f2e1989",
+    "license": "GPL-3.0-or-later",
+    "role": "Experimental runtime"
+  },
+  {
+    "name": "XCL",
+    "repository": "https://github.com/ivall/xcl.git",
+    "branch": "main",
+    "testedCommit": "a1672ef21c396d8edc9c4b0e3747f671bd40f528",
+    "license": "GPL-2.0-only",
+    "role": "Experimental runtime"
+  },
+  {
+    "name": "Leonida",
+    "repository": "https://github.com/tudorek12345/Leonida.git",
+    "branch": "main",
+    "testedCommit": "6f5b35fd81a2c0e1e77449691f061d1bf1446a9e",
+    "license": "GPL-3.0-or-later",
+    "role": "Integrated VIctory / D3D12 and native Vulkan runtimes"
+  },
+  {
+    "name": "Xbox2Windows",
+    "repository": "https://github.com/R0Y00/Xbox2Windows.git",
+    "branch": "main",
+    "testedCommit": "d6cbd5d7c9ac3f1c4583fc459ccbd990689af903",
+    "license": "MIT",
+    "role": "Offline research tools and GPU checks"
+  }
+]
